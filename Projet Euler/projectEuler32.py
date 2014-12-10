@@ -14,14 +14,16 @@ Created on Mon Dec 08 15:48:26 2014
 #digits
 
 #Now we have therefore 5 possibles digits, which gives (1,1,1,1,1), 
-#(1,1,1,2), (1,2,2),(1,1,3),(2,3) possibilities
+#(1,1,1,2), (1,2,2),(1,1,3),(2,3),(1,4) 6 possibilities
+
+
 def isPermutation(n,lis):
     string = str(n)  
     if len(string) != len(lis):
         return False
     else:
         #very important if you want a real copy and not a reference
-        temp = lis[:]
+        temp = list(lis)
         for i in range(len(string)):
             if int(string[i]) not in temp:
                 return False
@@ -41,6 +43,12 @@ def test1((x1,x2,y1,y2,y3),l2,t):
     if (isPermutation(z,l2))&(z not in list2):
         t += z
         list1.append((x,y))
+        list2.append(z)
+    y += x2*1000
+    z = x1*y
+    if (isPermutation(z,l2))&(z not in list2):
+        t += z
+        list1.append((x1,y))
         list2.append(z)
     return t
     
@@ -70,7 +78,13 @@ def test2((x1,x2,y1,y2,y3),l2,t):
     z = x*y1*(10*y2+y3)
     if (isPermutation(z,l2))&(z not in list2):
         t += z
-        list1.append((x,y))
+        list1.append((x,y1,10*y2+y3))
+        list2.append(z)
+    y += x2*1000
+    z = x1*y
+    if (isPermutation(z,l2))&(z not in list2):
+        t += z
+        list1.append((x1,y))
         list2.append(z)
     return t
     
