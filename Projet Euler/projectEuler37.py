@@ -59,13 +59,73 @@ def isConform(n):
         return True
         
 #- 1 1/7: it ends by 13 or 19, starts by 31 or 91, there is one possibility
-result = 0
-for n in [313,373]:
+resultL = []
+for n in [313,373,37,73]:
     if isConform(n):
-        result += n
+        resultL.append(n)
 
+list3Mod7 = []
+pow3 = 3
+while pow3 not in list3Mod7:
+    list3Mod7.append(pow3)
+    pow3 =(3*pow3)%7
+
+listSumMod7 = []
+s = 6
+i = 3
+while s not in listSumMod7:
+    listSumMod7.append(s)
+    s = (s+list3Mod7[i%6])%7
+    i += 1
+
+listSumMod7Bis = []
+s = 2
+i = 2
+while s not in listSumMod7Bis:
+    listSumMod7Bis.append(s)
+    s = (s+list3Mod7[i%6])%7
+    i += 1
 #- 2 1/7: If there is ever a 1, let's say the second in this couple, then, it
-#has to be followed by a 3 or 7. In case of 13, then since 313 and 913 are 
+#has to be followed by a 3 or 7. It would be 13 since it is the right one.
+#By looking modulo 7, we realize that we can't have more than 2 digit 
+#(otherwise the 3 digits would add up to 1 modulo 7 plus 13, woud be dividable
+#by 7):
 
+for begin in [[3,7],[3,1],[7]]:
+    for middle in [[],[3],[9],[3,3],[3,9],[9,3],[9,9]]:
+        n = begin + middle + [1,3]
+        if isConform(n):
+            m = 0
+            for i in range(len(n)):
+                m += int(n[len(n)-1-i])*10**i
+            resultL.append(m)
 
+choice = [[],[3],[9]]
+for begin in [[3,7],[3,1],[7]]:
+    for a in choice:
+        for b in choice:
+            for c in choice:
+                for d in choice:
+                    for e in choice:
+                        n = begin + a + b + c + d + e + [7]
+                        if isConform(n):
+                            m = 0
+                            for i in range(len(n)):
+                                m += int(n[len(n)-1-i])*10**i
+                            resultL.append(m)
 
+#By hand we realize that if there is 3 consecutive 3 before 73 it's over, but 
+#if there is a 9 in the first 3-digits sequence it's over even sooner, so the 
+#possible middle is 3 and 33, because we can't have more than 3 digits.
+for begin in [[3,7],[3,1],[7]]:
+    for middle in [[],[3],[3,3]]:
+        n = begin + middle + [7,3]
+        if isConform(n):
+            m = 0
+            for i in range(len(n)):
+                m += int(n[len(n)-1-i])*10**i
+            resultL.append(m)
+
+result = sum(list(set(resultL)))
+
+print result, list(set(resultL))
