@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Dec 09 23:12:28 2014
+Created on Wed Dec 10 08:41:08 2014
 
-@author: corpus
+@author: su.yang
 """
 
 #By looking at the last possible digits, one can deduce easily that the only 
 #possible digits are 1,3,7,9, otherwise the truncated number will be dividable 
-#by an even number of 5.
+#by an even number of 5. Except for 2/5 which can only be at the leftest position 
 #If there is more than three digits equal to 1 or 7, then by truncating, at 
 #some points we will have exactly 3, and the number would be dividable by 3.
 #So only 1 or 2 7/3 are allowed (and at least 1). and since two consecutive 
@@ -28,9 +28,9 @@ def isPrime(m):
             n += int(m[len(m)-1-i])*10**i
     else:
         n = m
-    if (n == 2)|(n == 3)|(n == 5)|(n in listPrimes):
+    if (n in listPrimes):
         return True
-    elif (n%2 == 0)|(n%3==0):
+    elif (n == 1)|(n%2 == 0)|(n%3==0):
         return False
     else:
         f = 5
@@ -59,72 +59,68 @@ def isConform(n):
         return True
         
 #- 1 1/7: it ends by 13 or 19, starts by 31 or 91, there is one possibility
+
+# for numbers starting with 2/5, we cannot have 1 or 7 by reasonning 
+#3. Therefore only 23 and 23 are admissible by looking at the ending.
 resultL = []
-for n in [313,373,37,73]:
+for n in [313,373,37,73,53,23]:
     if isConform(n):
         resultL.append(n)
 
-list3Mod7 = []
-pow3 = 3
-while pow3 not in list3Mod7:
-    list3Mod7.append(pow3)
-    pow3 =(3*pow3)%7
+#list3Mod7 = []
+#pow3 = 3
+#while pow3 not in list3Mod7:
+#    list3Mod7.append(pow3)
+#    pow3 =(3*pow3)%7
+#
+#listSumMod7 = []
+#s = 6
+#i = 3
+#while s not in listSumMod7:
+#    listSumMod7.append(s)
+#    s = (s+list3Mod7[i%6])%7
+#    i += 1
+#
+#listSumMod7Bis = []
+#s = 2
+#i = 2
+#while s not in listSumMod7Bis:
+#    listSumMod7Bis.append(s)
+#    s = (s+list3Mod7[i%6])%7
+#    i += 1
 
-listSumMod7 = []
-s = 6
-i = 3
-while s not in listSumMod7:
-    listSumMod7.append(s)
-    s = (s+list3Mod7[i%6])%7
-    i += 1
-
-listSumMod7Bis = []
-s = 2
-i = 2
-while s not in listSumMod7Bis:
-    listSumMod7Bis.append(s)
-    s = (s+list3Mod7[i%6])%7
-    i += 1
-#- 2 1/7: If there is ever a 1, let's say the second in this couple, then, it
-#has to be followed by a 3 or 7. It would be 13 since it is the right one.
-#By looking modulo 7, we realize that we can't have more than 2 digit 
-#(otherwise the 3 digits would add up to 1 modulo 7 plus 13, woud be dividable
-#by 7):
-
-for begin in [[3,7],[3,1],[7]]:
-    for middle in [[],[3],[9],[3,3],[3,9],[9,3],[9,9]]:
-        n = begin + middle + [1,3]
+start =  [[3,7],[3,1],[7]]
+for begin in start:
+    for end in [[7,3],[1,3],[7]]:
+        n = begin + end
         if isConform(n):
             m = 0
             for i in range(len(n)):
                 m += int(n[len(n)-1-i])*10**i
             resultL.append(m)
 
-choice = [[],[3],[9]]
-for begin in [[3,7],[3,1],[7]]:
-    for a in choice:
-        for b in choice:
-            for c in choice:
-                for d in choice:
-                    for e in choice:
-                        n = begin + a + b + c + d + e + [7]
-                        if isConform(n):
-                            m = 0
-                            for i in range(len(n)):
-                                m += int(n[len(n)-1-i])*10**i
-                            resultL.append(m)
+def fillList(listQueues):
+    if listQueues == []:
+        return 0
+    else:
+        lis = []
+        for addOn in [3,9]:
+            for queue in listQueues:
+                if isPrime([addOn]+queue):
+                    print [addOn]+queue
+                    lis.append([addOn]+queue)
+                for start in [[3,7],[3,1],[7]]:
+                    n = start+ [addOn] + queue
+                    if isConform(n):
+                        m = 0
+                        for i in range(len(n)):
+                            m += int(n[len(n)-1-i])*10**i
+                        resultL.append(m)
+    fillList(lis)
+    return 0
+            
+fillList([[7],[7,3],[1,3]])
 
-#By hand we realize that if there is 3 consecutive 3 before 73 it's over, but 
-#if there is a 9 in the first 3-digits sequence it's over even sooner, so the 
-#possible middle is 3 and 33, because we can't have more than 3 digits.
-for begin in [[3,7],[3,1],[7]]:
-    for middle in [[],[3],[3,3]]:
-        n = begin + middle + [7,3]
-        if isConform(n):
-            m = 0
-            for i in range(len(n)):
-                m += int(n[len(n)-1-i])*10**i
-            resultL.append(m)
 
 result = sum(list(set(resultL)))
 
